@@ -1,0 +1,187 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- We use SonaType for publishing artefacts. Parent POM makes things easier here. -->
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
+
+  <!-- Project info. -->
+  <groupId>org.carrot2</groupId>
+  <artifactId>folder2index</artifactId>
+  <version>0.0.1</version>
+  <packaging>jar</packaging>
+
+  <name>Folder2Index</name>
+  <description>
+    Creates a Lucene index from the provided folder of files.
+    This is a companion tool for the Carrot2 document clustering engine.
+  </description>
+  <url>http://carrot2.org</url>
+
+
+  <!-- Extended project info. -->
+  <licenses>
+    <license>
+      <name>BSD license</name>
+      <url>http://carrot2.org/carrot2.LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Carrot Search s.c.</name>
+    <url>http://www.carrotsearch.com</url>
+  </organization>
+
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://issues.carrot2.org/browse/CARROT</url>
+  </issueManagement>
+
+  <developers>
+    <developer>
+      <id>stanislaw.osinski</id>
+      <name>Stanisław Osiński</name>
+      <email>stanislaw.osinski@carrotsearch.com</email>
+    </developer>
+    
+    <developer>
+      <id>dawid.weiss</id>
+      <name>Dawid Weiss</name>
+      <email>dawid.weiss@carrotsearch.com</email>
+    </developer>
+  </developers>
+
+  <!-- Global properties. -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+  </properties>
+
+
+  <!-- Dependencies. -->
+  <dependencies>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>args4j</groupId>
+      <artifactId>args4j</artifactId>
+      <version>2.0.16</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>11.0.2</version>
+    </dependency>
+  </dependencies>
+
+
+  <!-- Build tuning. -->
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+
+    <!-- Confugure maven release plugin to make use of the profiles. -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <useReleaseProfile>true</useReleaseProfile>
+          <releaseProfiles>release,maven-release</releaseProfiles>
+          <pushChanges>false</pushChanges>
+          <scmCommentPrefix>Release: </scmCommentPrefix>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+
+  <!-- Reports -->
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.7.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
+
+
+  <profiles>
+    <!-- No tests, no additional checks. -->
+    <profile>
+      <id>fastinstall</id>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+      <build>
+        <defaultGoal>install</defaultGoal>
+      </build>
+    </profile>
+
+    <!-- Release mode. -->
+    <profile>
+      <id>release</id>
+
+      <build>
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+          <!-- Configure assembly of ZIP and TAR.GZ bundles (stand-alone distributions). -->
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/bin.xml</descriptor>
+              </descriptors>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
